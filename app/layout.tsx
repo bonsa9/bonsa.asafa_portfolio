@@ -10,7 +10,7 @@ import EnhancedChatbot from "@/components/enhanced-chatbot"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Bonsa Ayana - Software Engineer | Mobile & Web Developer",
+  title: "Bonsa Asafa - Software Engineer | Mobile & Web Developer",
   description:
     "Software Engineering graduate from Adama Science and Technology University. Specializing in React Native, Flutter, Next.js, and modern web technologies.",
   keywords: [
@@ -24,13 +24,13 @@ export const metadata: Metadata = {
     "adama university",
     "ethiopia developer",
   ],
-  authors: [{ name: "Bonsa Ayana" }],
+  authors: [{ name: "Bonsa Asafa" }],
   openGraph: {
     title: "Bonsa Ayana - Software Engineer",
     description: "Software Engineering graduate specializing in mobile and web development",
     type: "website",
   },
-    generator: 'v0.dev'
+    generator: '#'
 }
 
 export default function RootLayout({
