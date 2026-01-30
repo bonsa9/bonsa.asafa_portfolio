@@ -1,6 +1,3 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -11,88 +8,13 @@ import { AnimatedTechGrid } from "@/components/tech-icons"
 import { FloatingTechIcons } from "@/components/floating-icons"
 import ContactSection from "@/components/contact-section"
 import SocialLinks from "@/components/social-links"
+import { getGitHubProfile } from "@/lib/github"
+import { ProfileImage } from "@/components/profile-image"
+import { getPortfolioContent } from "@/lib/cms"
 
-interface GitHubProfile {
-  name: string
-  login: string
-  avatar_url: string
-  bio: string
-  location: string
-  email: string
-  html_url: string
-  public_repos: number
-  followers: number
-  following: number
-}
-
-export default function Home() {
-  const [profile, setProfile] = useState<GitHubProfile | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchProfile()
-  }, [])
-
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch("/api/github/profile")
-      if (response.ok) {
-        const data = await response.json()
-        console.log("GitHub profile data:", data) // Debug log
-        setProfile(data)
-      } else {
-        console.error("Failed to fetch profile:", response.status)
-      }
-    } catch (error) {
-      console.error("Error fetching profile:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const skills = [
-    "React Native",
-    "Flutter",
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Node.js",
-    "Django",
-    "Java",
-    "Firebase",
-    
-  ]
-
-  const featuredProjects = [
-    {
-      title: "E-Commerce Mobile App",
-      description: "A full-featured e-commerce mobile app built with React Native",
-      tech: ["React Native", "Firebase", "Stripe"],
-      image: "/ecomerce.svg?height=200&width=300",
-    },
-    {
-      title: "SaaS Dashboard",
-      description: "Modern web dashboard with analytics and user management",
-      tech: ["Next.js", "TypeScript", "Tailwind"],
-      image: "/dashboard.svg?height=200&width=300",
-    },
-    {
-      title: "Fitness Tracking App",
-      description: "Cross-platform fitness app with workout tracking and social features",
-      tech: ["Flutter", "Firebase", "REST API"],
-      image: "/fitnes.svg?height=200&width=300",
-    },
-  ]
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      </div>
-    )
-  }
+export default async function Home() {
+  const profile = await getGitHubProfile()
+  const content = await getPortfolioContent()
 
   const displayName = profile?.name || profile?.login || "Developer"
   const displayBio = profile?.bio || "Crafting Seamless Mobile & Web Experiences"
@@ -104,16 +26,13 @@ export default function Home() {
         <FloatingTechIcons />
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="mb-8">
-            <Image
+            <ProfileImage
               src={profile?.avatar_url || "/placeholder.svg?height=150&width=150"}
               alt={displayName}
               width={150}
               height={150}
               className="rounded-full mx-auto mb-6 border-4 border-primary/20"
-              onError={(e) => {
-                console.error("Failed to load profile image")
-                e.currentTarget.src = "/placeholder.svg?height=150&width=150"
-              }}
+              priority
             />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
@@ -190,7 +109,7 @@ export default function Home() {
       <section className="py-20 bg-muted/50">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">Technologies I Work With</h2>
-          <AnimatedTechGrid technologies={skills} />
+          <AnimatedTechGrid technologies={content.skills} />
         </div>
       </section>
 
@@ -202,7 +121,7 @@ export default function Home() {
             <p className="text-muted-foreground">Some of my recent work</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {featuredProjects.map((project, index) => (
+            {content.featured_projects.map((project, index) => (
               <Card key={index} className="overflow-hidden">
                 <Image
                   src={project.image || "/fitnes.svg"}
@@ -234,7 +153,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <ContactSection />
+      <ContactSection profile={profile} />
     </div>
   )
 }

@@ -5,10 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Mail, Phone, MapPin, ExternalLink, Send } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+import { ProfileImage } from "@/components/profile-image"
 import { motion } from "framer-motion"
 import SocialLinks from "@/components/social-links"
-import { useState, useEffect } from "react"
 
 interface GitHubProfile {
   avatar_url: string
@@ -18,26 +17,11 @@ interface GitHubProfile {
   email: string
 }
 
-export default function ContactSection() {
-  const [profile, setProfile] = useState<GitHubProfile | null>(null)
+interface ContactSectionProps {
+  profile?: GitHubProfile | null
+}
 
-  useEffect(() => {
-    fetchProfile()
-  }, [])
-
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch("/api/github/profile")
-      if (response.ok) {
-        const data = await response.json()
-        setProfile(data)
-      } else {
-        console.error("Contact section - Failed to fetch profile:", response.status)
-      }
-    } catch (error) {
-      console.error("Contact section - Error fetching profile:", error)
-    }
-  }
+export default function ContactSection({ profile }: ContactSectionProps) {
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -55,7 +39,7 @@ export default function ContactSection() {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100,
       },
     },
@@ -76,16 +60,13 @@ export default function ContactSection() {
             <Card className="max-w-2xl mx-auto">
               <CardContent className="p-8">
                 <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-                  <Image
+                  <ProfileImage
                     src={profile?.avatar_url || "/placeholder.svg?height=120&width=120"}
                     alt="Bonsa Asafa"
                     width={120}
                     height={120}
                     className="rounded-full border-4 border-primary/20"
-                    onError={(e) => {
-                      console.error("Contact section - Failed to load profile image")
-                      e.currentTarget.src = "/placeholder.svg?height=120&width=120"
-                    }}
+                    fallbackSrc="/placeholder.svg?height=120&width=120"
                   />
                   <div className="text-center md:text-left">
                     <h3 className="text-2xl font-bold mb-2">Bonsa Asafa</h3>
@@ -162,7 +143,7 @@ export default function ContactSection() {
               <motion.div variants={itemVariants}>
                 <Card className="text-center p-6 hover:shadow-lg transition-shadow">
                   <CardContent className="pt-6">
-                    <Send  className="h-8 w-8 text-primary mx-auto mb-4" />
+                    <Send className="h-8 w-8 text-primary mx-auto mb-4" />
                     <h4 className="font-semibold mb-2">Let's Chat</h4>
                     <p className="text-sm text-muted-foreground mb-4">Quick message via Telegram</p>
                     <Button variant="outline" size="sm" asChild>

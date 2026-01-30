@@ -1,11 +1,8 @@
-"use client"
-
 import Link from "next/link"
-import Image from "next/image"
+import { ProfileImage } from "@/components/profile-image"
 import { Github, Linkedin, Twitter, Mail, Phone, MapPin, Heart, Instagram } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { useState, useEffect } from "react"
 
 interface GitHubProfile {
   avatar_url: string
@@ -13,27 +10,12 @@ interface GitHubProfile {
   login: string
 }
 
-export default function Footer() {
-  const [profile, setProfile] = useState<GitHubProfile | null>(null)
+interface FooterProps {
+  profile: GitHubProfile | null
+}
+
+export default function Footer({ profile }: FooterProps) {
   const currentYear = new Date().getFullYear()
-
-  useEffect(() => {
-    fetchProfile()
-  }, [])
-
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch("/api/github/profile")
-      if (response.ok) {
-        const data = await response.json()
-        setProfile(data)
-      } else {
-        console.error("Footer - Failed to fetch profile:", response.status)
-      }
-    } catch (error) {
-      console.error("Footer - Error fetching profile:", error)
-    }
-  }
 
   const socialLinks = [
     {
@@ -83,16 +65,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-2">
             <div className="flex items-center space-x-4 mb-4">
-              <Image
+              <ProfileImage
                 src={profile?.avatar_url || "/placeholder.svg?height=60&width=60"}
                 alt="Bonsa Asafa"
                 width={60}
                 height={60}
                 className="rounded-full border-2 border-primary/20"
-                onError={(e) => {
-                  console.error("Footer - Failed to load profile image")
-                  e.currentTarget.src = "/placeholder.svg?height=60&width=60"
-                }}
+                fallbackSrc="/placeholder.svg?height=60&width=60"
               />
               <div>
                 <h3 className="text-lg font-semibold">Bonsa Asafa</h3>
